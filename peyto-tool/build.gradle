@@ -21,6 +21,9 @@ dependencies {
 	compile 'org.freemarker:freemarker:2.3.20'
 	compile 'org.yaml:snakeyaml:1.5'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+	runtime files( "./lib/sqljdbc4-4.0.jar" ) 
+	runtime files( "./lib/ojdbc14-10.2.0.1.0.jar" )
+	runtime files( "./lib/mariadb-java-client-1.1.7.jar" )
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
