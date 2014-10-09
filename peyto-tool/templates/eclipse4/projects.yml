@@ -1,0 +1,6 @@
+project:
+    - build
+    - common
+    - home
+    - server
+    - service

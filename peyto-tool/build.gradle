@@ -1,0 +1,58 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.springsource.org/lib-release" }
+}
+
+dependencies {
+	compile 'org.springframework.shell:spring-shell:1.1.0.RELEASE'
+	compile 'org.springframework:spring-test:4.0.3.RELEASE'
+	compile 'org.freemarker:freemarker:2.3.20'
+	compile 'org.yaml:snakeyaml:1.5'
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+mainClassName = "peyto.tool.Activator"
+
+task createSetclasspath {
+    def bin = file("$buildDir/bin")
+    outputs.dir bin
+    doLast {
+        bin.mkdirs()
+        new File(bin, "setclasspath.cmd").write("set JAVA_HOME=C:\\Program Files\\Java\\jdk1.7.0_67")
+    }
+}
+
+applicationDistribution.from(createSetclasspath) {
+    into "bin"
+}
+
+defaultTasks 'installApp'
+
+run {
+    standardInput = System.in
+}

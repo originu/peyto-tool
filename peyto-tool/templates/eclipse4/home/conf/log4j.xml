@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<param name="Threshold" value="DEBUG" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%-5p %d{MM-dd HH:mm:ss}[%20t]%-24.24C{2} %-15.15M %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="debugFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${PEYTO_PUSH_HOME}/peyto.push.server.master/logs/debug.log" /> 
+		<param name="Threshold" value="DEBUG" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'MM-dd-yyyy" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%-5p %d{MM-dd HH:mm:ss}[%20t]%-24.24C{2} %-15.15M %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="errorFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${PEYTO_PUSH_HOME}/peyto.push.server.master/logs/error.log" /> 
+		<param name="Threshold" value="error" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'MM-dd-yyyy" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%-5p %d{MM-dd HH:mm:ss}[%20t]%-24.24C{2} %-15.15M %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="mybatisFileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="${PEYTO_PUSH_HOME}/peyto.push.server.master/logs/mybatis.log" /> 
+		<param name="Threshold" value="DEBUG" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'MM-dd-yyyy" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%-5p %d{MM-dd HH:mm:ss:SSS} [%t] %C{2} %-15.15M %m%n" />
+		</layout>
+	</appender>
+
+	<!-- <appender name="errorFileAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${PEYTO_PUSH_HOME}/peyto.push.server.master/logs/error.log" />
+		<param name="Threshold" value="error" />
+		<param name="MaxFileSize" value="1KB" />
+		<param name="MaxBackupIndex" value="10" />
+		<param name="Append" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%-5p %d{MM-dd HH:mm:ss}[%20t]%-24.24C{2} %-15.15M %m%n" />
+		</layout>
+	</appender> --> 
+	
+<!-- 	<logger name="org.mybatis.spring.SqlSessionUtils" additivity="false"> -->
+<!-- 		<level value="DEBUG" /> -->
+<!-- 		<appender-ref ref="mybatisFileAppender" /> -->
+<!-- 	</logger> -->
+
+<!-- 	<logger name="org.springframework.jdbc.datasource.DataSourceUtils" additivity="false"> -->
+<!-- 		<level value="DEBUG" /> -->
+<!-- 		<appender-ref ref="mybatisFileAppender" /> -->
+<!-- 	</logger> -->
+	
+<!-- 	<logger name="org.springframework.jdbc.datasource.DriverManagerDataSource" additivity="false"> -->
+<!-- 		<level value="DEBUG" /> -->
+<!-- 		<appender-ref ref="mybatisFileAppender" /> -->
+<!-- 	</logger> -->
+	
+<!-- 	<logger name="org.mybatis.spring.transaction.SpringManagedTransaction" additivity="false"> -->
+<!-- 		<level value="DEBUG" /> -->
+<!-- 		<appender-ref ref="mybatisFileAppender" /> -->
+<!-- 	</logger> -->
+	
+	<logger name="com.mcnc.bizpush.dao.api" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="mybatisFileAppender" />
+		<appender-ref ref="console" />
+	</logger>
+
+	<root>
+		<appender-ref ref="debugFileAppender" />
+		<appender-ref ref="errorFileAppender" />
+		<appender-ref ref="console" />
+	</root>
+	
+</log4j:configuration>
