@@ -42,6 +42,8 @@ uploadArchives {
 
 mainClassName = "peyto.tool.Activator"
 
+//applicationDefaultJvmArgs = ['-DPEYTO_TOOL_HOME=%APP_HOME%']
+
 task createSetclasspath {
     def bin = file("$buildDir/bin")
     outputs.dir bin
@@ -53,10 +55,18 @@ task createSetclasspath {
 
 applicationDistribution.from(createSetclasspath) {
     into "bin"
+    
 }
 
 defaultTasks 'installApp'
 
 run {
     standardInput = System.in
+}
+
+//optsEnvironmentVar
+tasks.startScripts {
+  doLast {
+  	optsEnvironmentVar = '-DPEYTO_TOOL_HOME=%APP_HOME%'
+  }
 }

@@ -1,5 +1,6 @@
 package peyto.tool;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.springframework.shell.Bootstrap;
@@ -12,6 +13,12 @@ import org.springframework.shell.Bootstrap;
 public class Activator {
 	
 	public static void main(String[] args) throws IOException {
-		Bootstrap.main( args );
+		try {
+			File APP_HOME = Peyto.APP_HOME();
+			Bootstrap.main( args );
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 }
