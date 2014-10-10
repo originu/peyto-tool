@@ -1,6 +1,7 @@
 project:
     - build
     - common
+    - dist
     - home
     - server
     - service

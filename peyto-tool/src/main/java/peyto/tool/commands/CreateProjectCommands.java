@@ -3,9 +3,12 @@ package peyto.tool.commands;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,7 +16,9 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -55,7 +60,7 @@ public class CreateProjectCommands implements CommandMarker {
 
 			// Specify the data source where the template files come from. Here I set a
 			// plain directory for it, but non-file-system are possible too:
-			cfg.setDirectoryForTemplateLoading( new File( "./templates/eclipse4" ) );
+			//cfg.setDirectoryForTemplateLoading( new File( "./templates/eclipse4" ) );
 
 			// Specify how templates will see the data-model. This is an advanced topic...
 			// for now just use this:
@@ -90,20 +95,60 @@ public class CreateProjectCommands implements CommandMarker {
 				}
 				root.put( projectKey, sub );
 			}
+
+			File	outputDir	= new File( "./output" );
+			outputDir.mkdir();
+			
+			File baseDir	= new File( "./templates/eclipse4/");
+			Path basePath 	= Paths.get( baseDir.toURI() );	// ./templates/eclipse4
+			
+			
 			
 			keySet = map.keySet();
 			for ( String projectKey : keySet ) {
 				ArrayList< String >	projectNames	= ( ArrayList< String > )map.get( projectKey );
+				
+				// projectName: build
 				for ( String projectName : projectNames ) {
-					Collection< File > listFiles = FileUtils.listFiles( new File( "./templates/eclipse4/" ), new String[]{ "ftl" }, true );
+					File	baseProjectDir		= new File( baseDir, projectName );
+					Path	baseProjectPath 	= Paths.get(baseProjectDir.toURI() );			// ./templates/eclipse4/build
+					
+					File outputBaseProjectDir = new File( outputDir, getProjectName( group, name, projectName ) );	// ./output/{projectName} 
+					
+					Collection< File > listFiles = FileUtils.listFilesAndDirs( baseProjectDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE );
+//					Collection< File > listFiles = FileUtils.listFiles( baseProjectDir, null, true );
 					for ( File file : listFiles ) {
-						Template template = cfg.getTemplate( projectName + "/" + ".project.ftl", "UTF-8" );
-//						FileOutputStream	fos	= new FileOutputStream( new File( "" ) );
-						Writer	out	= new OutputStreamWriter( System.out );
-						try {
-							template.process( root, out );
-						} catch (TemplateException e) {
-							e.printStackTrace();
+						Path	sourcePath			= Paths.get( file.toURI() );								// {full file}
+						Path	relativizedPath		= baseProjectPath.relativize( sourcePath );					// ./build/{file}
+						File 	relativeTargetFile	= relativizedPath.toFile();	relativeTargetFile.getParent();
+						if ( file.isDirectory() ) {
+							File	targetFile	= new File( outputBaseProjectDir, relativeTargetFile.getParent() == null ? "" : relativeTargetFile.getParent() );
+							targetFile.mkdirs();
+						} else {
+							if ( FilenameUtils.isExtension( file.getName(), "ftl" ) ) {
+								File	targetFile			= new File( 
+										new File( outputBaseProjectDir, relativeTargetFile.getParent() == null ? "" : relativeTargetFile.getParent() ), 
+										FilenameUtils.getBaseName( file.getName() ) );
+								targetFile.getParentFile().mkdirs();
+								Template template = cfg.getTemplate( file.toString(), "UTF-8" );
+								FileOutputStream	fos	= new FileOutputStream( targetFile );
+								System.out.println( targetFile );
+								Writer	out	= new OutputStreamWriter( fos );
+								try {
+									template.process( root, out );
+								} catch (TemplateException e) {
+									e.printStackTrace();
+								} finally {
+									IOUtils.closeQuietly( fos );
+									IOUtils.closeQuietly( out );
+								}
+							} else {
+								File	targetFile			= new File( 
+										new File( outputBaseProjectDir, relativeTargetFile.getParent() == null ? "" : relativeTargetFile.getParent() ), 
+										file.getName() );
+								FileUtils.copyFile( file, targetFile );
+							}
+							
 						}
 					}
 				}
@@ -117,6 +162,10 @@ public class CreateProjectCommands implements CommandMarker {
 		}
 		
 		return "Message = [" + group + "] Location = [" + name + "]";
+	}
+	
+	private String getProjectName( String group, String name, String project ) {
+		return group + "-" + name + "-" + project;
 	}
 	
 }

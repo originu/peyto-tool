@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 jar {
     manifest {
-        attributes 'Implementation-Title': '${projectName}', 'Implementation-Version': version
+        attributes 'Implementation-Title': '${project.service}', 'Implementation-Version': version
     }
 }
 

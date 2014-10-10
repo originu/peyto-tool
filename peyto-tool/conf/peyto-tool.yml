@@ -1,0 +1,4 @@
+# 
+
+base_home: ${APP_HOME}
+output_dir: ${base_home}/output 
