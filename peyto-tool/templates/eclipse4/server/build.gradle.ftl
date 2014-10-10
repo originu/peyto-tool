@@ -1,4 +1,4 @@
-dmdapply plugin: 'java'
+apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 
