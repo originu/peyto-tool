@@ -27,4 +27,7 @@ dependencies {
     
     // DB::mariadb
     //runtime files( "../${project.home}/lib/mariadb-java-client-1.1.7.jar" )
+    
+    // DB::mysql
+    //runtime files( "../${project.home}/lib/mysql-connector-java-5.1.6.jar" )
 }
